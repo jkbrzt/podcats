@@ -9,7 +9,7 @@ so that they can be imported into iTunes or another podcast client.
 Installation
 ------------
 
-    $ pip install podcats
+    $ pip install --upgrade https://github.com/jkbr/podcats/tarball/master
 
 
 Usage
