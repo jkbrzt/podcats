@@ -30,7 +30,6 @@ FEED_TEMPLATE = """
     <channel>
         <title>{title}</title>
         <link>{link}</link>
-        <language>en-us</language>
         {items}
     </channel>
 </rss>
@@ -126,8 +125,8 @@ class Channel(object):
 
     def as_xml(self):
         return FEED_TEMPLATE.format(
-            title=self.title,
-            link=self.link,
+            title=escape(self.title),
+            link=escape(self.link),
             items=u''.join(
                 episode.as_xml() for episode
                 in sorted(self, key=attrgetter('date')))
