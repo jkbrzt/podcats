@@ -10,7 +10,6 @@ import time
 import argparse
 import mimetypes
 from email.utils import formatdate
-from operator import attrgetter
 from xml.sax.saxutils import escape, quoteattr
 
 import mutagen
@@ -52,6 +51,9 @@ class Episode(object):
         self.filename = filename
         self.url = url
         self.tags = mutagen.File(self.filename, easy=True)
+
+    def __cmp__(self, other):
+        return cmp(self.date, other.date)
 
     def as_xml(self):
         return EPISODE_TEMPLATE.format(
@@ -127,9 +129,7 @@ class Channel(object):
         return FEED_TEMPLATE.format(
             title=escape(self.title),
             link=escape(self.link),
-            items=u''.join(
-                episode.as_xml() for episode
-                in sorted(self, key=attrgetter('date')))
+            items=u''.join(episode.as_xml() for episode in sorted(self))
         ).strip()
 
 
