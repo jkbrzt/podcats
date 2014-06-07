@@ -8,8 +8,8 @@ setup(
     version=podcats.__version__,
     description='',
     long_description=open('README.rst').read(),
-    url='http://t.httpie.org/',
-    download_url='https://github.com/jkbr/httpie_tutorial',
+    url='https://github.com/jakubroztocil/podcats',
+    download_url='https://github.com/jakubroztocil/podcats',
     author=podcats.__author__,
     author_email=podcats.__email__,
     license=podcats.__licence__,
@@ -22,8 +22,8 @@ setup(
         ],
     },
     install_requires=[
-        'Flask==0.9',
-        'mutagen==1.20',
+        'Flask>=0.9',
+        'mutagen>=1.20',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

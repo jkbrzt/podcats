@@ -27,3 +27,13 @@ Generate & serve the feed as well as the files at http://localhost:5000. ::
 
 
 For more options see ``podcats --help``.
+
+
+Contact
+-------
+
+Jakub Roztočil
+
+* http://github.com/jakubroztocil
+* http://twitter.com/jakubroztocil
+* jakub@subtleapps.com

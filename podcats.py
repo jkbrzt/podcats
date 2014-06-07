@@ -1,8 +1,10 @@
 """
 Podcats is a podcast feed generator and a server.
+
 It generates RSS feeds for podcast episodes from local audio files and,
-optionally, exposes both the feed and episodes via a built in web server
-so that they can be imported into iTunes or another podcast client.
+optionally, exposes the feed and as well as the episode file via
+a built-in web server so that they can be imported into iTunes
+or another podcast client.
 
 """
 import os
@@ -16,11 +18,11 @@ import mutagen
 from flask import Flask, Response
 
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 __licence__ = 'BSD'
 __author__ = 'Jakub Roztocil'
-__email__ = 'jakub@roztocil.name'
-__url__ = 'https://github.com/jkbr/podcats'
+__email__ = 'jakub@subtleapps.com'
+__url__ = 'https://github.com/jakubroztocil/podcats'
 
 
 FEED_TEMPLATE = """
@@ -36,12 +38,12 @@ FEED_TEMPLATE = """
 
 
 EPISODE_TEMPLATE = """
-            <item>
-                <title>{title}</title>
-                <enclosure url={url} type="{mimetype}" />
-                <quid>{quid}</quid>
-                <pubDate>{date}</pubDate>
-            </item>
+    <item>
+        <title>{title}</title>
+        <enclosure url={url} type="{mimetype}" />
+        <quid>{quid}</quid>
+        <pubDate>{date}</pubDate>
+    </item>
 """
 
 
