@@ -4,7 +4,9 @@ from setuptools import setup
 setup(
     name='podcats',
     version='0.2.0',
-    description='',
+    description=('An application that generates RSS feeds for podcast '
+                 'episodes from local audio files and, optionally, '
+                 'exposes both via a built-in web server'),
     long_description=open('README.rst').read(),
     url='https://github.com/jakubroztocil/podcats',
     download_url='https://github.com/jakubroztocil/podcats',
