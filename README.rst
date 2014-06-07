@@ -10,7 +10,7 @@ Installation
 ------------
 ::
 
-    $ pip install --upgrade https://github.com/jkbr/podcats/tarball/master
+    $ pip install podcats
 
 
 Usage
