@@ -92,7 +92,7 @@ class Episode(object):
             ]
             for format in formats:
                 try:
-                    dt = time.strptime(dt, format)
+                    dt = time.mktime(time.strptime(dt, format))
                     break
                 except ValueError:
                     pass
@@ -139,14 +139,14 @@ def serve(channel):
     server = Flask(
         __name__,
         static_folder=channel.root_dir,
-        static_url_path=''
+        static_url_path='',
     )
     server.route('/')(
         lambda: Response(
             channel.as_xml(),
             content_type='application/xml; charset=utf8')
     )
-    server.run()
+    server.run(debug=True)
 
 
 def main():

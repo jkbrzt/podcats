@@ -1,18 +1,16 @@
 from setuptools import setup
 
-import podcats
-
 
 setup(
     name='podcats',
-    version=podcats.__version__,
+    version='0.2.0',
     description='',
     long_description=open('README.rst').read(),
     url='https://github.com/jakubroztocil/podcats',
     download_url='https://github.com/jakubroztocil/podcats',
-    author=podcats.__author__,
-    author_email=podcats.__email__,
-    license=podcats.__licence__,
+    author='Jakub Roztocil',
+    author_email='jakub@subtleapps.com',
+    license='BSD',
     py_modules=[
         'podcats'
     ],
