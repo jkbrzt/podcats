@@ -131,7 +131,7 @@ class Channel(object):
         return FEED_TEMPLATE.format(
             title=escape(self.title),
             link=escape(self.link),
-            items=u''.join(episode.as_xml() for episode in sorted(self))
+            items=''.join(episode.as_xml() for episode in sorted(self))
         ).strip()
 
 
@@ -156,12 +156,12 @@ def main():
                       title=args.title,
                       link=args.link)
     if args.action == 'generate':
-        print channel.as_xml()
+        print(channel.as_xml())
     else:
-        print 'Welcome to the Podcats web server!'
-        print '\nYour podcast feed is available at:\n'
-        print '\t' + channel.root_url
-        print
+        print('Welcome to the Podcats web server!')
+        print('\nYour podcast feed is available at:\n')
+        print('\t' + channel.root_url)
+        print()
         serve(channel)
 
 
