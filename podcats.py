@@ -82,10 +82,12 @@ class Episode(object):
     def title(self):
         tt = os.path.splitext(os.path.basename(self.filename))[0]
         if self.id3 is not None:
-            t = str(self.id3.getall("TIT2")[0])
-            c = str(self.id3.getall("COMM")[0])
-            if len(t) > 0 or len(c) > 0:
-                tt = "%s %s" % (t, c)
+            e = self.id3.getall("TIT2")
+            if len(e) > 0:
+                tt = tt + str(e[0])
+            e = self.id3.getall("COMM")
+            if len(e) > 0:
+                tt = tt + " " + str(e[0])
         return tt
 
     @property
