@@ -1,1 +1,9 @@
 dist/
+.direnv/
+__pycache__/
+*.pyc
+build/
+*.egg-info
+testdata/
+*.swp
+.envrc

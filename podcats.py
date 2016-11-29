@@ -14,7 +14,9 @@ import mimetypes
 from email.utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
+import pprint
 import mutagen
+from mutagen.id3 import ID3
 from flask import Flask, Response
 
 
@@ -53,6 +55,10 @@ class Episode(object):
         self.filename = filename
         self.url = url
         self.tags = mutagen.File(self.filename, easy=True)
+        try:
+            self.id3 = ID3(self.filename)
+        except:
+            self.id3 = None
 
     def __cmp__(self, other):
         return cmp(self.date, other.date)
@@ -74,8 +80,13 @@ class Episode(object):
 
     @property
     def title(self):
-        return (self.get_tag('title')
-                or os.path.splitext(os.path.basename(self.filename))[0])
+        tt = os.path.splitext(os.path.basename(self.filename))[0]
+        if self.id3 is not None:
+            t = str(self.id3.getall("TIT2")[0])
+            c = str(self.id3.getall("COMM")[0])
+            if len(t) > 0 or len(c) > 0:
+                tt = "%s %s" % (t, c)
+        return tt
 
     @property
     def date(self):
@@ -170,8 +181,8 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     '--url',
-    default='http://localhost:5000/',
-    help='root URL for episode files, default is http://localhost:5000/'
+    default='http://localhost:5000',
+    help='root URL for episode files, default is http://localhost:5000'
          ' (suitable for the built-in server)'
 )
 parser.add_argument(
