@@ -7,3 +7,5 @@ build/
 testdata/
 *.swp
 .envrc
+.vscode
+.python-version

@@ -14,42 +14,45 @@ import mimetypes
 from email.utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
-import pprint
 import mutagen
 from mutagen.id3 import ID3
 from flask import Flask, Response
 
-
-__version__ = '0.2.0'
+# original author info
+# __author__ = 'Jakub Roztocil'
+# __email__ = 'jakub@subtleapps.com'
+# __url__ = 'https://github.com/jakubroztocil/podcats'
+__version__ = '0.3.0'
 __licence__ = 'BSD'
-__author__ = 'Jakub Roztocil'
-__email__ = 'jakub@subtleapps.com'
-__url__ = 'https://github.com/jakubroztocil/podcats'
+__author__ = 'Yasunari Momoi'
+__email__ = 'ymomoi@gmail.com'
+__url__ = 'https://github.com/ymomoi/podcats'
 
 
 FEED_TEMPLATE = """
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
-    <channel>
-        <title>{title}</title>
-        <link>{link}</link>
-        {items}
-    </channel>
+  <channel>
+    <title>{title}</title>
+    <link>{link}</link>
+    {items}
+  </channel>
 </rss>
 """
 
 
 EPISODE_TEMPLATE = """
     <item>
-        <title>{title}</title>
-        <enclosure url={url} type="{mimetype}" />
-        <quid>{quid}</quid>
-        <pubDate>{date}</pubDate>
+      <title>{title}</title>
+      <enclosure url={url} type="{mimetype}" />
+      <quid>{quid}</quid>
+      <pubDate>{date}</pubDate>
     </item>
 """
 
 
 class Episode(object):
+    """class for each episode."""
 
     def __init__(self, filename, url):
         self.filename = filename
@@ -64,6 +67,7 @@ class Episode(object):
         return cmp(self.date, other.date)
 
     def as_xml(self):
+        """return XML output."""
         return EPISODE_TEMPLATE.format(
             title=escape(self.title),
             url=quoteattr(self.url),
@@ -73,6 +77,7 @@ class Episode(object):
         )
 
     def get_tag(self, name):
+        """return episode tag info."""
         try:
             return self.tags[name][0]
         except (KeyError, IndexError):
@@ -80,15 +85,16 @@ class Episode(object):
 
     @property
     def title(self):
-        tt = os.path.splitext(os.path.basename(self.filename))[0]
+        """return title ID3 tag."""
+        tit = os.path.splitext(os.path.basename(self.filename))[0]
         if self.id3 is not None:
-            e = self.id3.getall("TIT2")
-            if len(e) > 0:
-                tt = tt + str(e[0])
-            e = self.id3.getall("COMM")
-            if len(e) > 0:
-                tt = tt + " " + str(e[0])
-        return tt
+            val = self.id3.getall("TIT2")
+            if len(val) > 0:
+                tit = tit + str(val[0])
+            val = self.id3.getall("COMM")
+            if len(val) > 0:
+                tit = tit + " " + str(val[0])
+        return tit
 
     @property
     def date(self):
@@ -103,26 +109,26 @@ class Episode(object):
                 '%Y-%m',
                 '%Y',
             ]
-            for format in formats:
+            for fmt in formats:
                 try:
-                    dt = time.mktime(time.strptime(dt, format))
+                    dt = time.mktime(time.strptime(dt, fmt))
                     break
                 except ValueError:
                     pass
             else:
                 dt = None
-
         if not dt:
             dt = os.path.getmtime(self.filename)
-
         return dt
 
     @property
     def mimetype(self):
+        """return file type."""
         return mimetypes.guess_type(self.filename)[0]
 
 
 class Channel(object):
+    """class for podcast channel."""
 
     def __init__(self, root_dir, root_url, title, link):
         self.root_dir = root_dir or os.getcwd()
@@ -131,16 +137,17 @@ class Channel(object):
         self.title = title or os.path.basename(self.root_dir.rstrip('/'))
 
     def __iter__(self):
-        for root, dirs, files in os.walk(self.root_dir):
+        for root, _, files in os.walk(self.root_dir):
             relative_dir = root[len(self.root_dir) + 1:]
             for fn in files:
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
                 if mimetype and 'audio' in mimetype:
-                    url = self.root_url + relative_dir + '/' + fn
+                    url = self.root_url + '/' + relative_dir + '/' + fn
                     yield Episode(filepath, url)
 
     def as_xml(self):
+        """return XML output."""
         return FEED_TEMPLATE.format(
             title=escape(self.title),
             link=escape(self.link),
@@ -159,7 +166,7 @@ def serve(channel):
             channel.as_xml(),
             content_type='application/xml; charset=utf8')
     )
-    server.run(debug=True)
+    server.run(host='0.0.0.0', port=5000, debug=True)
 
 
 def main():
