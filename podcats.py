@@ -8,10 +8,16 @@ or another podcast client.
 
 usage:
   $ python podcats/podcats.py \
-      --host bug.org --port 8080 \
+      --host your.host.org --port 8080 \
       --title PRT \
       serve \
-      /home/momo/radikool/records/BAYFM78-PRT/
+      /path/to/your/mp3/dir/
+
+  $ python podcats/podcats.py \
+      --host your.host.org --port 8080 \
+      --title PRT \
+      serve \
+      /path/to/your/mp3/dir/
 
 """
 import os
