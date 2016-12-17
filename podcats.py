@@ -130,9 +130,11 @@ class Episode(object):
 class Channel(object):
     """class for podcast channel."""
 
-    def __init__(self, root_dir, root_url, title, link):
+    def __init__(self, root_dir, root_url, host, port, title, link):
         self.root_dir = root_dir or os.getcwd()
         self.root_url = root_url
+        self.host = host
+        self.port = int(port)
         self.link = link or self.root_url
         self.title = title or os.path.basename(self.root_dir.rstrip('/'))
 
@@ -155,45 +157,58 @@ class Channel(object):
         ).strip()
 
 
-def serve(channel):
+def serve(ch):
     server = Flask(
         __name__,
-        static_folder=channel.root_dir,
+        static_folder=ch.root_dir,
         static_url_path='',
     )
     server.route('/')(
         lambda: Response(
-            channel.as_xml(),
-            content_type='application/xml; charset=utf8')
+            ch.as_xml(),
+            content_type='application/xml; charset=utf-8')
     )
-    server.run(host='0.0.0.0', port=5000, debug=True)
+    server.run(host=ch.host, port=ch.port, debug=True)
 
 
 def main():
     args = parser.parse_args()
-    channel = Channel(root_dir=args.directory,
-                      root_url=args.url,
-                      title=args.title,
-                      link=args.link)
+    url = 'http://' + args.host + ':' + args.port
+    ch = Channel(root_dir=args.directory,
+                 root_url=url,
+                 host=args.host,
+                 port=args.port,
+                 title=args.title,
+                 link=args.link)
     if args.action == 'generate':
-        print(channel.as_xml())
+        print(ch.as_xml())
     else:
         print('Welcome to the Podcats web server!')
         print('\nYour podcast feed is available at:\n')
-        print('\t' + channel.root_url)
+        print('\t' + ch.root_url)
         print()
-        serve(channel)
+        serve(ch)
 
 
 parser = argparse.ArgumentParser(
     description='Podcats: podcast feed generator and server <%s>.' % __url__
 )
 parser.add_argument(
-    '--url',
-    default='http://localhost:5000',
-    help='root URL for episode files, default is http://localhost:5000'
-         ' (suitable for the built-in server)'
+    '--host',
+    default='localhost',
+    help='host for listen'
 )
+parser.add_argument(
+    '--port',
+    default='5000',
+    help='listen port number'
+)
+#parser.add_argument(
+#    '--url',
+#    default='http://localhost:5000',
+#    help='root URL for episode files, default is http://localhost:5000'
+#         ' (suitable for the built-in server)'
+#)
 parser.add_argument(
     'action',
     metavar='COMMAND',
