@@ -9,13 +9,7 @@ or another podcast client.
 usage:
   $ python podcats/podcats.py \
       --host your.host.org --port 8080 \
-      --title PRT \
-      serve \
-      /path/to/your/mp3/dir/
-
-  $ python podcats/podcats.py \
-      --host your.host.org --port 8080 \
-      --title PRT \
+      --title 'your podcast channel title' \
       serve \
       /path/to/your/mp3/dir/
 
