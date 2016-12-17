@@ -6,8 +6,16 @@ optionally, exposes the feed and as well as the episode file via
 a built-in web server so that they can be imported into iTunes
 or another podcast client.
 
+usage:
+  $ python podcats/podcats.py \
+      --host bug.org --port 8080 \
+      --title PRT \
+      serve \
+      /home/momo/radikool/records/BAYFM78-PRT/
+
 """
 import os
+import re
 import time
 import argparse
 import mimetypes
@@ -145,7 +153,9 @@ class Channel(object):
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
                 if mimetype and 'audio' in mimetype:
-                    url = self.root_url + '/static/' + fn
+                    path = '/static/' + relative_dir + '/' + fn
+                    path = re.sub(r'//', '/', path)
+                    url = self.root_url + path
                     yield Episode(filepath, url)
 
     def as_xml(self):
@@ -203,12 +213,6 @@ parser.add_argument(
     default='5000',
     help='listen port number'
 )
-#parser.add_argument(
-#    '--url',
-#    default='http://localhost:5000',
-#    help='root URL for episode files, default is http://localhost:5000'
-#         ' (suitable for the built-in server)'
-#)
 parser.add_argument(
     'action',
     metavar='COMMAND',
