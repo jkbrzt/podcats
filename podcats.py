@@ -15,6 +15,7 @@ from email.utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
 import mutagen
+from mutagen.id3 import ID3
 from flask import Flask, Response
 
 
@@ -53,6 +54,10 @@ class Episode(object):
         self.filename = filename
         self.url = url
         self.tags = mutagen.File(self.filename, easy=True)
+        try:
+            self.id3 = ID3(self.filename)
+        except:
+            self.id3 = None
 
     def __cmp__(self, other):
         return cmp(self.date, other.date)
@@ -74,8 +79,15 @@ class Episode(object):
 
     @property
     def title(self):
-        return (self.get_tag('title')
-                or os.path.splitext(os.path.basename(self.filename))[0])
+        tit = os.path.splitext(os.path.basename(self.filename))[0]
+        if self.id3 is not None:
+            val = self.id3.getall("TIT2")
+            if len(val) > 0:
+                tit = tit + str(val[0])
+            val = self.id3.getall("COMM")
+            if len(val) > 0:
+                tit = tit + " " + str(val[0])
+        return tit
 
     @property
     def date(self):
