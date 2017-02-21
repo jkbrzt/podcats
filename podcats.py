@@ -8,6 +8,7 @@ or another podcast client.
 
 """
 import os
+import re
 import time
 import argparse
 import mimetypes
