@@ -8,6 +8,7 @@ or another podcast client.
 
 """
 import os
+import re
 import time
 import argparse
 import mimetypes
@@ -126,7 +127,9 @@ class Channel(object):
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
                 if mimetype and 'audio' in mimetype:
-                    url = self.root_url + relative_dir + '/' + fn
+                    path = '/static/' + relative_dir + '/' + fn
+                    path = re.sub(r'//', '/', path)
+                    url = self.root_url + path
                     yield Episode(filepath, url)
 
     def as_xml(self):
@@ -141,7 +144,7 @@ def serve(ch):
     server = Flask(
         __name__,
         static_folder=ch.root_dir,
-        static_url_path='',
+        static_url_path='/static',
     )
     server.route('/')(
         lambda: Response(
