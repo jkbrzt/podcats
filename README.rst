@@ -3,7 +3,8 @@ Podcats
 
 Podcats generates RSS feeds for podcast episodes from local audio files and,
 optionally, exposes both the feed and episodes via a built in web server,
-so that they can be imported into iTunes or another podcast client.
+so that they can be conveniently imported into iTunes, Overcast or another
+podcast client.
 
 
 Installation
@@ -34,6 +35,6 @@ Contact
 
 Jakub Roztočil
 
-* http://github.com/jakubroztocil
-* http://twitter.com/jakubroztocil
-* jakub@subtleapps.com
+* http://github.com/jkbrzt
+* http://twitter.com/jkbrzt
+

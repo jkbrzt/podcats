@@ -8,8 +8,8 @@ setup(
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),
     long_description=open('README.rst').read(),
-    url='https://github.com/jakubroztocil/podcats',
-    download_url='https://github.com/jakubroztocil/podcats',
+    url='https://github.com/jkbrzt/podcats',
+    download_url='https://github.com/jkbrzt/podcats',
     author='Jakub Roztocil',
     author_email='jakub@subtleapps.com',
     license='BSD',
