@@ -71,7 +71,7 @@ class Episode(object):
         return (a > b) - (a < b)  # Python3 cmp() equivalent
 
     def as_xml(self):
-        """return XML output."""
+        """Return episode item XML."""
         return EPISODE_TEMPLATE.format(
             title=escape(self.title),
             url=quoteattr(self.url),
@@ -81,7 +81,7 @@ class Episode(object):
         )
 
     def get_tag(self, name):
-        """return episode tag info."""
+        """Return episode file tag info"""
         try:
             return self.tags[name][0]
         except (KeyError, IndexError):
