@@ -49,6 +49,7 @@ EPISODE_TEMPLATE = """
 
 
 class Episode(object):
+    """class for each episode."""
 
     def __init__(self, filename, url):
         self.filename = filename
@@ -63,6 +64,7 @@ class Episode(object):
         return cmp(self.date, other.date)
 
     def as_xml(self):
+        """return XML output."""
         return EPISODE_TEMPLATE.format(
             title=escape(self.title),
             url=quoteattr(self.url),
@@ -72,6 +74,7 @@ class Episode(object):
         )
 
     def get_tag(self, name):
+        """return episode tag info."""
         try:
             return self.tags[name][0]
         except (KeyError, IndexError):
@@ -79,6 +82,7 @@ class Episode(object):
 
     @property
     def title(self):
+        """return episode title."""
         tit = os.path.splitext(os.path.basename(self.filename))[0]
         if self.id3 is not None:
             val = self.id3.getall("TIT2")
@@ -102,9 +106,9 @@ class Episode(object):
                 '%Y-%m',
                 '%Y',
             ]
-            for format in formats:
+            for fmt in formats:
                 try:
-                    dt = time.mktime(time.strptime(dt, format))
+                    dt = time.mktime(time.strptime(dt, fmt))
                     break
                 except ValueError:
                     pass
@@ -118,10 +122,12 @@ class Episode(object):
 
     @property
     def mimetype(self):
+        """return file mimetype."""
         return mimetypes.guess_type(self.filename)[0]
 
 
 class Channel(object):
+    """class for podcast channel."""
 
     def __init__(self, root_dir, root_url, title, link):
         self.root_dir = root_dir or os.getcwd()
@@ -130,7 +136,7 @@ class Channel(object):
         self.title = title or os.path.basename(self.root_dir.rstrip('/'))
 
     def __iter__(self):
-        for root, dirs, files in os.walk(self.root_dir):
+        for root, _, files in os.walk(self.root_dir):
             relative_dir = root[len(self.root_dir) + 1:]
             for fn in files:
                 filepath = os.path.join(root, fn)
@@ -140,6 +146,7 @@ class Channel(object):
                     yield Episode(filepath, url)
 
     def as_xml(self):
+        """return XML output."""
         return FEED_TEMPLATE.format(
             title=escape(self.title),
             link=escape(self.link),
@@ -148,6 +155,7 @@ class Channel(object):
 
 
 def serve(channel):
+    """podcasting server mode"""
     server = Flask(
         __name__,
         static_folder=channel.root_dir,
@@ -162,6 +170,7 @@ def serve(channel):
 
 
 def main():
+    """main function."""
     args = parser.parse_args()
     channel = Channel(root_dir=args.directory,
                       root_url=args.url,
