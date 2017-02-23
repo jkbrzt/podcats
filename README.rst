@@ -38,3 +38,12 @@ Jakub Roztočil
 * http://github.com/jkbrzt
 * http://twitter.com/jkbrzt
 
+Changelog
+---------
+
+0.3.0 (2017-02-23)
+==================
+
+* Added Python 3 support
+* Improved episode ID tag title extraction (@ymomoi)
+* Replaced ``--url`` with ``--host`` and ``--port`` (@ymomoi)
