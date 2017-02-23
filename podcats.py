@@ -20,11 +20,10 @@ from mutagen.id3 import ID3
 from flask import Flask, Response
 
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 __licence__ = 'BSD'
 __author__ = 'Jakub Roztocil'
-__email__ = 'jakub@subtleapps.com'
-__url__ = 'https://github.com/jakubroztocil/podcats'
+__url__ = 'https://github.com/jkbrzt/podcats'
 
 
 FEED_TEMPLATE = """
@@ -50,7 +49,7 @@ EPISODE_TEMPLATE = """
 
 
 class Episode(object):
-    """class for each episode."""
+    """Podcast episode"""
 
     def __init__(self, filename, url):
         self.filename = filename
@@ -61,8 +60,15 @@ class Episode(object):
         except:
             self.id3 = None
 
+    def __lt__(self, other):
+        return self.date < other.date
+
+    def __gt__(self, other):
+        return self.date > other.date
+
     def __cmp__(self, other):
-        return cmp(self.date, other.date)
+        a, b = self.date, other.date
+        return (a > b) - (a < b)  # Python3 cmp() equivalent
 
     def as_xml(self):
         """return XML output."""
@@ -83,20 +89,20 @@ class Episode(object):
 
     @property
     def title(self):
-        """return episode title."""
-        tit = os.path.splitext(os.path.basename(self.filename))[0]
+        """Return episode title"""
+        text = os.path.splitext(os.path.basename(self.filename))[0]
         if self.id3 is not None:
-            val = self.id3.getall("TIT2")
+            val = self.id3.getall('TIT2')
             if len(val) > 0:
-                tit = tit + str(val[0])
-            val = self.id3.getall("COMM")
+                text += str(val[0])
+            val = self.id3.getall('COMM')
             if len(val) > 0:
-                tit = tit + " " + str(val[0])
-        return tit
+                text += ' ' + str(val[0])
+        return text
 
     @property
     def date(self):
-        """Return a date as unix timestamp."""
+        """Return episode date as unix timestamp"""
         dt = self.get_tag('date')
         if dt:
             formats = [
@@ -123,12 +129,12 @@ class Episode(object):
 
     @property
     def mimetype(self):
-        """return file mimetype."""
+        """Return file mimetype name."""
         return mimetypes.guess_type(self.filename)[0]
 
 
 class Channel(object):
-    """class for podcast channel."""
+    """Podcast channel"""
 
     def __init__(self, root_dir, root_url, host, port, title, link):
         self.root_dir = root_dir or os.getcwd()
@@ -151,46 +157,48 @@ class Channel(object):
                     yield Episode(filepath, url)
 
     def as_xml(self):
-        """return XML output."""
+        """Return channel XML with all episode items"""
         return FEED_TEMPLATE.format(
             title=escape(self.title),
             link=escape(self.link),
             items=u''.join(episode.as_xml() for episode in sorted(self))
         ).strip()
 
-def serve(ch):
-    """podcasting server mode"""
+
+def serve(channel):
+    """Serve podcast channel and episodes over HTTP"""
     server = Flask(
         __name__,
-        static_folder=ch.root_dir,
+        static_folder=channel.root_dir,
         static_url_path='/static',
     )
     server.route('/')(
         lambda: Response(
-            ch.as_xml(),
+            channel.as_xml(),
             content_type='application/xml; charset=utf-8')
     )
-    server.run(host=ch.host, port=ch.port, debug=True)
+    server.run(host=channel.host, port=channel.port, debug=True)
 
 
 def main():
-    """main function."""
+    """Main function"""
     args = parser.parse_args()
     url = 'http://' + args.host + ':' + args.port
-    ch = Channel(root_dir=args.directory,
-                 root_url=url,
-                 host=args.host,
-                 port=args.port,
-                 title=args.title,
-                 link=args.link)
+    channel = Channel(
+        root_dir=args.directory,
+        root_url=url,
+        host=args.host,
+        port=args.port,
+        title=args.title,
+        link=args.link,
+    )
     if args.action == 'generate':
-        print ch.as_xml()
+        print(channel.as_xml())
     else:
-        print 'Welcome to the Podcats web server!'
-        print '\nYour podcast feed is available at:\n'
-        print '\t' + ch.root_url
-        print
-        serve(ch)
+        print('Welcome to the Podcats web server!')
+        print('\nYour podcast feed is available at:\n')
+        print('\t' + channel.root_url + '\n')
+        serve(channel)
 
 
 parser = argparse.ArgumentParser(
@@ -217,7 +225,7 @@ parser.add_argument(
 parser.add_argument(
     'directory',
     metavar='DIRECTORY',
-    help='directory with episode/audio files'
+    help='path to a directory with episode audio files',
 )
 parser.add_argument('--title', help='optional feed title')
 parser.add_argument('--link', help='optional feed link')

@@ -1,1 +1,5 @@
 dist/
+.idea/
+__pycache__/
+podcats.egg-info/
+podcats.pyc
