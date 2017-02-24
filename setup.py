@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='podcats',
-    version='0.2.0',
+    version='0.3.0',
     description=('An application that generates RSS feeds for podcast '
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),
@@ -29,6 +29,7 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: BSD License',

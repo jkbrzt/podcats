@@ -1,11 +1,5 @@
 dist/
-.direnv/
+.idea/
 __pycache__/
-*.pyc
-build/
-*.egg-info
-testdata/
-*.swp
-.envrc
-.vscode
-.python-version
+podcats.egg-info/
+podcats.pyc
