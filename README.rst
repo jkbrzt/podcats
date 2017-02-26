@@ -1,6 +1,11 @@
 Podcats
 #######
 
+
+.. image:: https://travis-ci.org/jkbrzt/podcats.svg?branch=master
+    :target: https://travis-ci.org/jkbrzt/podcats
+
+
 Podcats generates RSS feeds for podcast episodes from local audio files and,
 optionally, exposes both the feed and episodes via a built in web server,
 so that they can be conveniently imported into iTunes, Overcast or another
