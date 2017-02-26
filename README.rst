@@ -41,7 +41,7 @@ Jakub Roztočil
 Changelog
 =========
 
-0.4.0 (2017-02-26)
+0.5.0 (2017-02-26)
 ------------------
 
 * Fixed ``setup.py`` for Python 3 (@ymomoi)
