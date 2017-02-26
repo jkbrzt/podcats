@@ -7,7 +7,7 @@ setup(
     description=('An application that generates RSS feeds for podcast '
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),
-    long_description=open('README.rst').read(),
+    long_description=open('README.rst', 'rb').read(),
     url='https://github.com/jkbrzt/podcats',
     download_url='https://github.com/jkbrzt/podcats',
     author='Jakub Roztocil',
