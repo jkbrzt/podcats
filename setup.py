@@ -1,13 +1,19 @@
+import codecs
+
 from setuptools import setup
 
 
+def _get_long_description():
+    with codecs.open('README.rst', encoding='utf8') as f:
+        return f.read()
+
 setup(
     name='podcats',
-    version='0.3.0',
+    version='0.5.0',
     description=('An application that generates RSS feeds for podcast '
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),
-    long_description=open('README.rst').read(),
+    long_description=_get_long_description(),
     url='https://github.com/jkbrzt/podcats',
     download_url='https://github.com/jkbrzt/podcats',
     author='Jakub Roztocil',

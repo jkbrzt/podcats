@@ -20,7 +20,7 @@ from mutagen.id3 import ID3
 from flask import Flask, Response
 
 
-__version__ = '0.3.0'
+__version__ = '0.5.0'
 __licence__ = 'BSD'
 __author__ = 'Jakub Roztocil'
 __url__ = 'https://github.com/jkbrzt/podcats'
