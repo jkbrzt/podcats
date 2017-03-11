@@ -40,8 +40,9 @@ Contact
 
 Jakub Roztočil
 
-* http://github.com/jakubroztocil
-* http://twitter.com/jakubroztocil
+* https://github.com/jakubroztocil
+* https://twitter.com/jakubroztocil
+* https://roztocil.co
 
 Changelog
 =========
