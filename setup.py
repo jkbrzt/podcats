@@ -14,8 +14,8 @@ setup(
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),
     long_description=_get_long_description(),
-    url='https://github.com/jkbrzt/podcats',
-    download_url='https://github.com/jkbrzt/podcats',
+    url='https://github.com/jakubroztocil/podcats',
+    download_url='https://github.com/jakubroztocil/podcats',
     author='Jakub Roztocil',
     author_email='jakub@subtleapps.com',
     license='BSD',

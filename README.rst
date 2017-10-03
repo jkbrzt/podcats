@@ -2,8 +2,8 @@ Podcats
 #######
 
 
-.. image:: https://travis-ci.org/jkbrzt/podcats.svg?branch=master
-    :target: https://travis-ci.org/jkbrzt/podcats
+.. image:: https://travis-ci.org/jakubroztocil/podcats.svg?branch=master
+    :target: https://travis-ci.org/jakubroztocil/podcats
 
 
 Podcats generates RSS feeds for podcast episodes from local audio files and,
@@ -40,8 +40,9 @@ Contact
 
 Jakub Roztočil
 
-* http://github.com/jkbrzt
-* http://twitter.com/jkbrzt
+* https://github.com/jakubroztocil
+* https://twitter.com/jakubroztocil
+* https://roztocil.co
 
 Changelog
 =========
