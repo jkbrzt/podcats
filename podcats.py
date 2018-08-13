@@ -41,7 +41,7 @@ FEED_TEMPLATE = """
 EPISODE_TEMPLATE = """
     <item>
         <title>{title}</title>
-        <enclosure url={url} type="{mimetype}" />
+        <enclosure url={url} type="{mimetype}" length="{length}" />
         <guid>{guid}</guid>
         <pubDate>{date}</pubDate>
     </item>
@@ -54,6 +54,7 @@ class Episode(object):
     def __init__(self, filename, url):
         self.filename = filename
         self.url = url
+        self.length = os.path.getsize(filename)
         self.tags = mutagen.File(self.filename, easy=True)
         try:
             self.id3 = ID3(self.filename)
@@ -77,6 +78,7 @@ class Episode(object):
             url=quoteattr(self.url),
             guid=escape(self.url),
             mimetype=self.mimetype,
+            length=self.length,
             date=formatdate(self.date)
         )
 
