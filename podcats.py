@@ -15,6 +15,12 @@ import mimetypes
 from email.utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
+try:
+    from urllib.request import pathname2url
+except ImportError:
+    # For python 2
+    from urllib import pathname2url
+
 import mutagen
 from mutagen.id3 import ID3
 from flask import Flask, Response
@@ -155,7 +161,7 @@ class Channel(object):
                 if mimetype and 'audio' in mimetype:
                     path = '/static/' + relative_dir + '/' + fn
                     path = re.sub(r'//', '/', path)
-                    url = self.root_url + path
+                    url = self.root_url + pathname2url(path)
                     yield Episode(filepath, url)
 
     def as_xml(self):
