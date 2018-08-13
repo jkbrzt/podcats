@@ -42,7 +42,7 @@ EPISODE_TEMPLATE = """
     <item>
         <title>{title}</title>
         <enclosure url={url} type="{mimetype}" />
-        <quid>{quid}</quid>
+        <guid>{guid}</guid>
         <pubDate>{date}</pubDate>
     </item>
 """
@@ -75,7 +75,7 @@ class Episode(object):
         return EPISODE_TEMPLATE.format(
             title=escape(self.title),
             url=quoteattr(self.url),
-            quid=escape(self.url),
+            guid=escape(self.url),
             mimetype=self.mimetype,
             date=formatdate(self.date)
         )
