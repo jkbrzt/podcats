@@ -145,7 +145,7 @@ class Episode(object):
 class Channel(object):
     """Podcast channel"""
 
-    def __init__(self, root_dir, root_url, host, port, title, link):
+    def __init__(self, root_dir, root_url, host, port, title, link, debug=False):
         self.root_dir = root_dir or os.getcwd()
         self.root_url = root_url
         self.host = host
@@ -239,6 +239,11 @@ parser.add_argument(
     'directory',
     metavar='DIRECTORY',
     help='path to a directory with episode audio files',
+)
+parser.add_argument(
+    '--debug',
+    action="store_true",
+    help='Serve with debug mode on'
 )
 parser.add_argument('--title', help='optional feed title')
 parser.add_argument('--link', help='optional feed link')
