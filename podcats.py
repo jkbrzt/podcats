@@ -139,7 +139,10 @@ class Episode(object):
     @property
     def mimetype(self):
         """Return file mimetype name."""
-        return mimetypes.guess_type(self.filename)[0]
+        if self.filename.endswith('m4b'):
+            return 'audio/x-m4b'
+        else:
+            return mimetypes.guess_type(self.filename)[0]
 
 
 class Channel(object):
@@ -160,7 +163,7 @@ class Channel(object):
             for fn in files:
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
-                if mimetype and 'audio' in mimetype:
+                if mimetype and 'audio' in mimetype or filepath.endswith('m4b'):
                     path = '/static/' + relative_dir + '/' + fn
                     path = re.sub(r'//', '/', path)
                     url = self.root_url + pathname2url(path)
