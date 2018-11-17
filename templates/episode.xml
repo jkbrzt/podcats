@@ -1,0 +1,6 @@
+<item>
+    <title>{{ title }}</title>
+    <enclosure url={{ url }} type="{{ mimetype }}" length="{{ length }}" />
+    <guid>{{ guid }}</guid>
+    <pubDate>{{ date }}</pubDate>
+</item>

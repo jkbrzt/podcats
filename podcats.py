@@ -25,7 +25,7 @@ import mutagen
 import humanize
 from mutagen.id3 import ID3
 from flask import Flask, Response
-
+from jinja2 import Environment, FileSystemLoader
 
 __version__ = '0.5.0'
 __licence__ = 'BSD'
@@ -33,66 +33,12 @@ __author__ = 'Jakub Roztocil'
 __url__ = 'https://github.com/jakubroztocil/podcats'
 
 
-FEED_TEMPLATE_XML = """
-<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
-    <channel>
-        <title>{title}</title>
-        <description>{description}</description>
-        <link>{link}</link>
-        {items}
-    </channel>
-</rss>
-"""
-
-
-FEED_TEMPLATE_HTML = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{title}</title>
-</head>
-    <body>
-        <h1>{title}</h1>
-        <p>{description}. RSS feed at <a href="{link}">{link}</a>.</p>
-        {items}
-    </body>
-</html>
-"""
-
-
-EPISODE_TEMPLATE_XML = """
-    <item>
-        <title>{title}</title>
-        <enclosure url={url} type="{mimetype}" length="{length}" />
-        <guid>{guid}</guid>
-        <pubDate>{date}</pubDate>
-    </item>
-"""
-
-
-EPISODE_TEMPLATE_HTML = """
-    <article>
-        <h2><a href="{url}">{title}</a></h2>
-        <p>
-            <ul>
-                <li>Directory: {directory}</li>
-                <li>File: {filename}</li>
-                <li>Date: {date}</li>
-                <li>Size: {length}</li>
-                <li>Mimetype: {mimetype}</li>
-            </ul>
-            <audio controls>
-                <source src="{url}"/>
-            </audio>
-        </p>
-    </article>
-"""
-
 WEB_PATH = 'web'
+
+
+jinja2_env = Environment(
+    loader=FileSystemLoader('templates'),
+)
 
 
 class Episode(object):
@@ -120,7 +66,9 @@ class Episode(object):
 
     def as_xml(self):
         """Return episode item XML."""
-        return EPISODE_TEMPLATE_XML.format(
+        template = jinja2_env.get_template('episode.xml')
+        
+        return template.render(
             title=escape(self.title),
             url=quoteattr(self.url),
             guid=escape(self.url),
@@ -133,7 +81,9 @@ class Episode(object):
         """Return episode item html."""
         filename = os.path.basename(self.filename)
         directory = os.path.split(os.path.dirname(self.filename))[-1]
-        return EPISODE_TEMPLATE_HTML.format(
+        template = jinja2_env.get_template('episode.html')
+        
+        return template.render(
             title=escape(self.title),
             url=self.url,
             filename=filename,
@@ -226,7 +176,8 @@ class Channel(object):
 
     def as_xml(self):
         """Return channel XML with all episode items"""
-        return FEED_TEMPLATE_XML.format(
+        template = jinja2_env.get_template('feed.xml')
+        return template.render(
             title=escape(self.title),
             description=escape(self.description),
             link=escape(self.link),
@@ -235,7 +186,8 @@ class Channel(object):
 
     def as_html(self):
         """Return channel HTML with all episode items"""
-        return FEED_TEMPLATE_HTML.format(
+        template = jinja2_env.get_template('feed.html')
+        return template.render(
             title=escape(self.title),
             description=escape(self.description),
             link=escape(self.link),

@@ -1,0 +1,15 @@
+<article>
+    <h2><a href="{{ url }}">{{ title }}</a></h2>
+    <p>
+        <ul>
+            <li>Directory: {{ directory }}</li>
+            <li>File: {{ filename }}</li>
+            <li>Date: {{ date }}</li>
+            <li>Size: {{ length }}</li>
+            <li>Mimetype: {{ mimetype }}</li>
+        </ul>
+        <audio controls>
+            <source src="{{ url }}"/>
+        </audio>
+    </p>
+</article>
