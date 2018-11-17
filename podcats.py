@@ -22,6 +22,7 @@ except ImportError:
     from urllib import pathname2url
 
 import mutagen
+import humanize
 from mutagen.id3 import ID3
 from flask import Flask, Response
 
@@ -32,7 +33,7 @@ __author__ = 'Jakub Roztocil'
 __url__ = 'https://github.com/jakubroztocil/podcats'
 
 
-FEED_TEMPLATE = """
+FEED_TEMPLATE_XML = """
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
     <channel>
@@ -45,7 +46,25 @@ FEED_TEMPLATE = """
 """
 
 
-EPISODE_TEMPLATE = """
+FEED_TEMPLATE_HTML = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{title}</title>
+</head>
+    <body>
+        <h1>{title}</h1>
+        <p>{description}. RSS feed at <a href="{link}">{link}</a>.</p>
+        {items}
+    </body>
+</html>
+"""
+
+
+EPISODE_TEMPLATE_XML = """
     <item>
         <title>{title}</title>
         <enclosure url={url} type="{mimetype}" length="{length}" />
@@ -53,6 +72,27 @@ EPISODE_TEMPLATE = """
         <pubDate>{date}</pubDate>
     </item>
 """
+
+
+EPISODE_TEMPLATE_HTML = """
+    <article>
+        <h2><a href="{url}">{title}</a></h2>
+        <p>
+            <ul>
+                <li>Directory: {directory}</li>
+                <li>File: {filename}</li>
+                <li>Date: {date}</li>
+                <li>Size: {length}</li>
+                <li>Mimetype: {mimetype}</li>
+            </ul>
+            <audio controls>
+                <source src="{url}"/>
+            </audio>
+        </p>
+    </article>
+"""
+
+WEB_PATH = 'web'
 
 
 class Episode(object):
@@ -80,12 +120,26 @@ class Episode(object):
 
     def as_xml(self):
         """Return episode item XML."""
-        return EPISODE_TEMPLATE.format(
+        return EPISODE_TEMPLATE_XML.format(
             title=escape(self.title),
             url=quoteattr(self.url),
             guid=escape(self.url),
             mimetype=self.mimetype,
             length=self.length,
+            date=formatdate(self.date)
+        )
+
+    def as_html(self):
+        """Return episode item html."""
+        filename = os.path.basename(self.filename)
+        directory = os.path.split(os.path.dirname(self.filename))[-1]
+        return EPISODE_TEMPLATE_HTML.format(
+            title=escape(self.title),
+            url=self.url,
+            filename=filename,
+            directory=directory,
+            mimetype=self.mimetype,
+            length=humanize.naturalsize(self.length),
             date=formatdate(self.date)
         )
 
@@ -172,11 +226,20 @@ class Channel(object):
 
     def as_xml(self):
         """Return channel XML with all episode items"""
-        return FEED_TEMPLATE.format(
+        return FEED_TEMPLATE_XML.format(
             title=escape(self.title),
             description=escape(self.description),
             link=escape(self.link),
             items=u''.join(episode.as_xml() for episode in sorted(self))
+        ).strip()
+
+    def as_html(self):
+        """Return channel HTML with all episode items"""
+        return FEED_TEMPLATE_HTML.format(
+            title=escape(self.title),
+            description=escape(self.description),
+            link=escape(self.link),
+            items=u''.join(episode.as_html() for episode in sorted(self)),
         ).strip()
 
 
@@ -191,6 +254,11 @@ def serve(channel):
         lambda: Response(
             channel.as_xml(),
             content_type='application/xml; charset=utf-8')
+    )
+    server.add_url_rule(
+        '/{web_path}'.format(web_path=WEB_PATH),
+        view_func=channel.as_html,
+        methods=['GET'],
     )
     server.run(host=channel.host, port=channel.port, debug=channel.debug, threaded=True)
 
@@ -210,10 +278,14 @@ def main():
     )
     if args.action == 'generate':
         print(channel.as_xml())
+    elif args.action == 'generate_html':
+        print(channel.as_html())
     else:
         print('Welcome to the Podcats web server!')
         print('\nYour podcast feed is available at:\n')
         print('\t' + channel.root_url + '\n')
+        print('The web interface is available at\n')
+        print('\t{url}/{web_path}\n'.format(url=url, web_path=WEB_PATH))
         serve(channel)
 
 
@@ -233,7 +305,7 @@ parser.add_argument(
 parser.add_argument(
     'action',
     metavar='COMMAND',
-    choices=['generate', 'serve'],
+    choices=['generate', 'generate_html', 'serve'],
     help='`generate` the RSS feed to the terminal, or'
          '`serve` the generated RSS as well as audio files'
          ' via the built-in web server'
