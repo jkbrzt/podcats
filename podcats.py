@@ -164,7 +164,7 @@ class Channel(object):
 
     def __iter__(self):
         for root, _, files in os.walk(self.root_dir):
-            relative_dir = root[len(self.root_dir) + 1:]
+            relative_dir = root[len(self.root_dir):]
             for fn in files:
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
