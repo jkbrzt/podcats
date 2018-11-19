@@ -1,5 +1,8 @@
 <article class="col-md-6 col-lg-4">
     <h2><a href="{{ url }}">{{ title }}</a></h2>
+    {% if image %}
+    <img src="/static/{{ image }}"/>
+    {% endif %}
     <ul>
         <li>Directory: {{ directory }}</li>
         <li>File: {{ filename }}</li>

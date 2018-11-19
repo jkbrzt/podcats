@@ -3,4 +3,7 @@
     <enclosure url={{ url }} type="{{ mimetype }}" length="{{ length }}" />
     <guid>{{ guid }}</guid>
     <pubDate>{{ date }}</pubDate>
+    {% if image %}
+        <itunes:image href="/static/{{ image }}"/>
+    {% endif %}
 </item>

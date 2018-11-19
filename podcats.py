@@ -9,6 +9,7 @@ or another podcast client.
 """
 import os
 import re
+import glob
 import time
 import argparse
 import mimetypes
@@ -74,7 +75,8 @@ class Episode(object):
             guid=escape(self.url),
             mimetype=self.mimetype,
             length=self.length,
-            date=formatdate(self.date)
+            date=formatdate(self.date),
+            image=self.image,
         )
 
     def as_html(self):
@@ -90,7 +92,8 @@ class Episode(object):
             directory=directory,
             mimetype=self.mimetype,
             length=humanize.naturalsize(self.length),
-            date=formatdate(self.date)
+            date=formatdate(self.date),
+            image=self.image,
         )
 
     def get_tag(self, name):
@@ -147,6 +150,19 @@ class Episode(object):
             return 'audio/x-m4b'
         else:
             return mimetypes.guess_type(self.filename)[0]
+
+    @property
+    def image(self):
+        """Return an eventual cover image."""
+        image = None
+        directory = os.path.split(self.filename)[0]
+        image_files = glob.glob(directory + '/*.jpg')
+        
+        if len(image_files) > 0:
+            abs_path_image = image_files[0]
+            image = os.path.split(abs_path_image)[-1]
+        
+        return image
 
 
 class Channel(object):
