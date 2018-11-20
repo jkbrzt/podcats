@@ -36,6 +36,8 @@ __url__ = 'https://github.com/jakubroztocil/podcats'
 
 WEB_PATH = '/web'
 STATIC_PATH = '/static'
+BOOK_COVER_EXTENSIONS = ('.jpg', '.jpeg', '.png')
+
 
 jinja2_env = Environment(
     loader=FileSystemLoader('templates'),
@@ -168,7 +170,12 @@ class Episode(object):
     def image(self):
         """Return an eventual cover image"""
         directory = os.path.split(self.filename)[0]
-        image_files = glob.glob(directory + '/*.jpg')
+        image_files = []
+        
+        for fn in os.listdir(directory):
+            ext = os.path.splitext(fn)[1]
+            if ext.lower() in BOOK_COVER_EXTENSIONS:
+                image_files.append(fn)
         
         if len(image_files) > 0:
             abs_path_image = image_files[0]
