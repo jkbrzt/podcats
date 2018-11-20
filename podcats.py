@@ -66,7 +66,7 @@ class Episode(object):
         return (a > b) - (a < b)  # Python3 cmp() equivalent
 
     def as_xml(self):
-        """Return episode item XML."""
+        """Return episode item XML"""
         template = jinja2_env.get_template('episode.xml')
         
         return template.render(
@@ -80,7 +80,7 @@ class Episode(object):
         )
 
     def as_html(self):
-        """Return episode item html."""
+        """Return episode item html"""
         filename = os.path.basename(self.filename)
         directory = os.path.split(os.path.dirname(self.filename))[-1]
         template = jinja2_env.get_template('episode.html')
@@ -145,7 +145,7 @@ class Episode(object):
 
     @property
     def mimetype(self):
-        """Return file mimetype name."""
+        """Return file mimetype name"""
         if self.filename.endswith('m4b'):
             return 'audio/x-m4b'
         else:
@@ -153,7 +153,7 @@ class Episode(object):
 
     @property
     def image(self):
-        """Return an eventual cover image."""
+        """Return an eventual cover image"""
         image = None
         directory = os.path.split(self.filename)[0]
         image_files = glob.glob(directory + '/*.jpg')
