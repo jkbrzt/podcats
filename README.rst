@@ -52,6 +52,12 @@ Jakub Roztočil
 Changelog
 =========
 
+0.6.1 (2018-11-20)
+------------------
+
+* Find and show eventual book covers in web interface (@tiktuk)
+
+
 0.6.0 (2018-11-20)
 ------------------
 
