@@ -45,9 +45,10 @@ jinja2_env = Environment(
 class Episode(object):
     """Podcast episode"""
 
-    def __init__(self, filename, url):
+    def __init__(self, filename, relative_dir, root_url):
         self.filename = filename
-        self.url = url
+        self.relative_dir = relative_dir
+        self.root_url = root_url
         self.length = os.path.getsize(filename)
         self.tags = mutagen.File(self.filename, easy=True)
         try:
@@ -115,6 +116,15 @@ class Episode(object):
             if len(val) > 0:
                 text += ' ' + str(val[0])
         return text
+
+    @property
+    def url(self):
+        """Return episode url"""
+        fn = os.path.basename(self.filename)
+        path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
+        path = re.sub(r'//', '/', path)
+        url = self.root_url + pathname2url(path)
+        return url
 
     @property
     def date(self):
@@ -185,10 +195,7 @@ class Channel(object):
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
                 if mimetype and 'audio' in mimetype or filepath.endswith('m4b'):
-                    path = STATIC_PATH + '/' + relative_dir + '/' + fn
-                    path = re.sub(r'//', '/', path)
-                    url = self.root_url + pathname2url(path)
-                    yield Episode(filepath, url)
+                    yield Episode(filepath, relative_dir, self.root_url)
 
     def as_xml(self):
         """Return channel XML with all episode items"""
