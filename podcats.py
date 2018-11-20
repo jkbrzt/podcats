@@ -77,7 +77,7 @@ class Episode(object):
             mimetype=self.mimetype,
             length=self.length,
             date=formatdate(self.date),
-            image=self.image,
+            image_url=self.image,
         )
 
     def as_html(self):
@@ -94,7 +94,7 @@ class Episode(object):
             mimetype=self.mimetype,
             length=humanize.naturalsize(self.length),
             date=formatdate(self.date),
-            image=self.image,
+            image_url=self.image,
         )
 
     def get_tag(self, name):
@@ -103,6 +103,13 @@ class Episode(object):
             return self.tags[name][0]
         except (KeyError, IndexError):
             pass
+
+    def _to_url(self, filepath):
+        fn = os.path.basename(filepath)
+        path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
+        path = re.sub(r'//', '/', path)
+        url = self.root_url + pathname2url(path)
+        return url
 
     @property
     def title(self):
@@ -120,11 +127,7 @@ class Episode(object):
     @property
     def url(self):
         """Return episode url"""
-        fn = os.path.basename(self.filename)
-        path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
-        path = re.sub(r'//', '/', path)
-        url = self.root_url + pathname2url(path)
-        return url
+        return self._to_url(self.filename)
 
     @property
     def date(self):
@@ -164,15 +167,14 @@ class Episode(object):
     @property
     def image(self):
         """Return an eventual cover image"""
-        image = None
         directory = os.path.split(self.filename)[0]
         image_files = glob.glob(directory + '/*.jpg')
         
         if len(image_files) > 0:
             abs_path_image = image_files[0]
-            image = os.path.split(abs_path_image)[-1]
-        
-        return image
+            return self._to_url(abs_path_image)
+        else:
+            return None
 
 
 class Channel(object):
