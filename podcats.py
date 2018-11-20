@@ -34,7 +34,7 @@ __author__ = 'Jakub Roztocil'
 __url__ = 'https://github.com/jakubroztocil/podcats'
 
 
-WEB_PATH = 'web'
+WEB_PATH = '/web'
 STATIC_PATH = '/static'
 
 jinja2_env = Environment(
@@ -224,7 +224,7 @@ def serve(channel):
             content_type='application/xml; charset=utf-8')
     )
     server.add_url_rule(
-        '/{web_path}'.format(web_path=WEB_PATH),
+        WEB_PATH,
         view_func=channel.as_html,
         methods=['GET'],
     )
@@ -253,7 +253,7 @@ def main():
         print('\nYour podcast feed is available at:\n')
         print('\t' + channel.root_url + '\n')
         print('The web interface is available at\n')
-        print('\t{url}/{web_path}\n'.format(url=url, web_path=WEB_PATH))
+        print('\t{url}{web_path}\n'.format(url=url, web_path=WEB_PATH))
         serve(channel)
 
 
