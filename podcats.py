@@ -35,7 +35,7 @@ __url__ = 'https://github.com/jakubroztocil/podcats'
 
 
 WEB_PATH = 'web'
-
+STATIC_PATH = '/static'
 
 jinja2_env = Environment(
     loader=FileSystemLoader('templates'),
@@ -185,7 +185,7 @@ class Channel(object):
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
                 if mimetype and 'audio' in mimetype or filepath.endswith('m4b'):
-                    path = '/static/' + relative_dir + '/' + fn
+                    path = STATIC_PATH + '/' + relative_dir + '/' + fn
                     path = re.sub(r'//', '/', path)
                     url = self.root_url + pathname2url(path)
                     yield Episode(filepath, url)
@@ -216,7 +216,7 @@ def serve(channel):
     server = Flask(
         __name__,
         static_folder=channel.root_dir,
-        static_url_path='/static',
+        static_url_path=STATIC_PATH,
     )
     server.route('/')(
         lambda: Response(
