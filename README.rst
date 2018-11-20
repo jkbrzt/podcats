@@ -55,10 +55,10 @@ Changelog
 0.6.0 (2018-11-20)
 ------------------
 
-* Added a web interface
-* Support m4b-files
-* Added ``--debug`` flag
-* Feed now validates against RSS spec
+* Added a web interface (@tiktuk)
+* Support m4b-files (@tiktuk)
+* Added ``--debug`` flag (@tiktuk)
+* Feed now validates against RSS spec (@tiktuk)
 
 
 0.5.0 (2017-02-26)
