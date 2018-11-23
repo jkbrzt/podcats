@@ -7,6 +7,7 @@ def _get_long_description():
     with codecs.open('README.rst', encoding='utf8') as f:
         return f.read()
 
+
 setup(
     name='podcats',
     version='0.6.1',
