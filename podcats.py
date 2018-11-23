@@ -9,6 +9,7 @@ or another podcast client.
 """
 import os
 import re
+import glob
 import time
 import argparse
 import mimetypes
@@ -27,13 +28,15 @@ from mutagen.id3 import ID3
 from flask import Flask, Response
 from jinja2 import Environment, FileSystemLoader
 
-__version__ = '0.6.0'
+__version__ = '0.6.1'
 __licence__ = 'BSD'
 __author__ = 'Jakub Roztocil'
 __url__ = 'https://github.com/jakubroztocil/podcats'
 
 
-WEB_PATH = 'web'
+WEB_PATH = '/web'
+STATIC_PATH = '/static'
+BOOK_COVER_EXTENSIONS = ('.jpg', '.jpeg', '.png')
 
 
 jinja2_env = Environment(
@@ -44,9 +47,10 @@ jinja2_env = Environment(
 class Episode(object):
     """Podcast episode"""
 
-    def __init__(self, filename, url):
+    def __init__(self, filename, relative_dir, root_url):
         self.filename = filename
-        self.url = url
+        self.relative_dir = relative_dir
+        self.root_url = root_url
         self.length = os.path.getsize(filename)
         self.tags = mutagen.File(self.filename, easy=True)
         try:
@@ -65,7 +69,7 @@ class Episode(object):
         return (a > b) - (a < b)  # Python3 cmp() equivalent
 
     def as_xml(self):
-        """Return episode item XML."""
+        """Return episode item XML"""
         template = jinja2_env.get_template('episode.xml')
         
         return template.render(
@@ -74,11 +78,12 @@ class Episode(object):
             guid=escape(self.url),
             mimetype=self.mimetype,
             length=self.length,
-            date=formatdate(self.date)
+            date=formatdate(self.date),
+            image_url=self.image,
         )
 
     def as_html(self):
-        """Return episode item html."""
+        """Return episode item html"""
         filename = os.path.basename(self.filename)
         directory = os.path.split(os.path.dirname(self.filename))[-1]
         template = jinja2_env.get_template('episode.html')
@@ -90,7 +95,8 @@ class Episode(object):
             directory=directory,
             mimetype=self.mimetype,
             length=humanize.naturalsize(self.length),
-            date=formatdate(self.date)
+            date=formatdate(self.date),
+            image_url=self.image,
         )
 
     def get_tag(self, name):
@@ -99,6 +105,13 @@ class Episode(object):
             return self.tags[name][0]
         except (KeyError, IndexError):
             pass
+
+    def _to_url(self, filepath):
+        fn = os.path.basename(filepath)
+        path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
+        path = re.sub(r'//', '/', path)
+        url = self.root_url + pathname2url(path)
+        return url
 
     @property
     def title(self):
@@ -112,6 +125,11 @@ class Episode(object):
             if len(val) > 0:
                 text += ' ' + str(val[0])
         return text
+
+    @property
+    def url(self):
+        """Return episode url"""
+        return self._to_url(self.filename)
 
     @property
     def date(self):
@@ -142,11 +160,28 @@ class Episode(object):
 
     @property
     def mimetype(self):
-        """Return file mimetype name."""
+        """Return file mimetype name"""
         if self.filename.endswith('m4b'):
             return 'audio/x-m4b'
         else:
             return mimetypes.guess_type(self.filename)[0]
+
+    @property
+    def image(self):
+        """Return an eventual cover image"""
+        directory = os.path.split(self.filename)[0]
+        image_files = []
+        
+        for fn in os.listdir(directory):
+            ext = os.path.splitext(fn)[1]
+            if ext.lower() in BOOK_COVER_EXTENSIONS:
+                image_files.append(fn)
+        
+        if len(image_files) > 0:
+            abs_path_image = image_files[0]
+            return self._to_url(abs_path_image)
+        else:
+            return None
 
 
 class Channel(object):
@@ -169,10 +204,7 @@ class Channel(object):
                 filepath = os.path.join(root, fn)
                 mimetype = mimetypes.guess_type(filepath)[0]
                 if mimetype and 'audio' in mimetype or filepath.endswith('m4b'):
-                    path = '/static/' + relative_dir + '/' + fn
-                    path = re.sub(r'//', '/', path)
-                    url = self.root_url + pathname2url(path)
-                    yield Episode(filepath, url)
+                    yield Episode(filepath, relative_dir, self.root_url)
 
     def as_xml(self):
         """Return channel XML with all episode items"""
@@ -200,7 +232,7 @@ def serve(channel):
     server = Flask(
         __name__,
         static_folder=channel.root_dir,
-        static_url_path='/static',
+        static_url_path=STATIC_PATH,
     )
     server.route('/')(
         lambda: Response(
@@ -208,7 +240,7 @@ def serve(channel):
             content_type='application/xml; charset=utf-8')
     )
     server.add_url_rule(
-        '/{web_path}'.format(web_path=WEB_PATH),
+        WEB_PATH,
         view_func=channel.as_html,
         methods=['GET'],
     )
@@ -237,7 +269,7 @@ def main():
         print('\nYour podcast feed is available at:\n')
         print('\t' + channel.root_url + '\n')
         print('The web interface is available at\n')
-        print('\t{url}/{web_path}\n'.format(url=url, web_path=WEB_PATH))
+        print('\t{url}{web_path}\n'.format(url=url, web_path=WEB_PATH))
         serve(channel)
 
 
