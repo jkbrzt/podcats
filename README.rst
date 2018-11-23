@@ -31,6 +31,11 @@ Generate & serve the feed as well as the files at http://localhost:5000. ::
 
     $ podcats serve my/offline/podcasts
 
+A web interface is available at http://localhost:5000/web.
+
+You can also generate the html for the web interface. ::
+
+    $ podcats generate_html my/offline/podcasts
 
 For more options see ``podcats --help``.
 
@@ -46,6 +51,15 @@ Jakub Roztočil
 
 Changelog
 =========
+
+0.6.0 (2018-11-20)
+------------------
+
+* Added a web interface (@tiktuk)
+* Support m4b-files (@tiktuk)
+* Added ``--debug`` flag (@tiktuk)
+* Feed now validates against RSS spec (@tiktuk)
+
 
 0.5.0 (2017-02-26)
 ------------------
