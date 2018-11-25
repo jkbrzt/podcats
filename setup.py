@@ -10,7 +10,7 @@ def _get_long_description():
 
 setup(
     name='podcats',
-    version='0.6.1',
+    version='0.6.2',
     description=('An application that generates RSS feeds for podcast '
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),
@@ -20,9 +20,10 @@ setup(
     author='Jakub Roztocil',
     author_email='jakub@subtleapps.com',
     license='BSD',
-    py_modules=[
+    packages=[
         'podcats'
     ],
+    include_package_data=True,
     entry_points={
         'console_scripts': [
             'podcats = podcats:main',

@@ -29,7 +29,7 @@ from flask import Flask, Response
 # noinspection PyPackageRequirements
 from jinja2 import Environment, FileSystemLoader
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 __licence__ = 'BSD'
 __author__ = 'Jakub Roztocil'
 __url__ = 'https://github.com/jakubroztocil/podcats'
@@ -37,12 +37,10 @@ __url__ = 'https://github.com/jakubroztocil/podcats'
 
 WEB_PATH = '/web'
 STATIC_PATH = '/static'
+TEMPLATES_ROOT = os.path.join(os.path.dirname(__file__), 'templates')
 BOOK_COVER_EXTENSIONS = ('.jpg', '.jpeg', '.png')
 
-
-jinja2_env = Environment(
-    loader=FileSystemLoader('templates'),
-)
+jinja2_env = Environment(loader=FileSystemLoader(TEMPLATES_ROOT))
 
 
 class Episode(object):
