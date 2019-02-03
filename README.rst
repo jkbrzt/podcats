@@ -52,7 +52,7 @@ Jakub Roztočil
 Changelog
 =========
 
-0.6.3 (2018-11-25)
+0.6.3 (2019-02-03)
 ------------------
 
 * Fixed relative paths.
