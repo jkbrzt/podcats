@@ -13,6 +13,7 @@ import time
 import argparse
 import mimetypes
 from email.utils import formatdate
+from os import path
 from xml.sax.saxutils import escape, quoteattr
 
 try:
@@ -252,7 +253,7 @@ def main():
     args = parser.parse_args()
     url = 'http://' + args.host + ':' + args.port
     channel = Channel(
-        root_dir=args.directory,
+        root_dir=path.abspath(args.directory),
         root_url=url,
         host=args.host,
         port=args.port,
