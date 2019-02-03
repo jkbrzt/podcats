@@ -10,7 +10,7 @@ def _get_long_description():
 
 setup(
     name='podcats',
-    version='0.6.2',
+    version='0.6.3',
     description=('An application that generates RSS feeds for podcast '
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),

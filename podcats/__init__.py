@@ -30,7 +30,7 @@ from flask import Flask, Response
 # noinspection PyPackageRequirements
 from jinja2 import Environment, FileSystemLoader
 
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 __licence__ = 'BSD'
 __author__ = 'Jakub Roztocil'
 __url__ = 'https://github.com/jakubroztocil/podcats'
