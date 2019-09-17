@@ -2,9 +2,8 @@ Podcats
 #######
 
 
-.. image:: https://travis-ci.org/jakubroztocil/podcats.svg?branch=master
-    :target: https://travis-ci.org/jakubroztocil/podcats
-
+.. image:: https://github.com/jakubroztocil/podcats/workflows/Build/badge.svg
+    :target: https://github.com/jakubroztocil/podcats/actions
 
 Podcats generates RSS feeds for podcast episodes from local audio files and,
 optionally, exposes both the feed and episodes via a built in web server,
