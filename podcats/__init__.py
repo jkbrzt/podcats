@@ -8,6 +8,7 @@ or another podcast client.
 
 """
 import datetime
+import logging
 import os
 import re
 import time
@@ -15,6 +16,7 @@ import argparse
 import mimetypes
 from email.utils import formatdate
 from os import path
+from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
 try:
@@ -45,6 +47,8 @@ BOOK_COVER_EXTENSIONS = ('.jpg', '.jpeg', '.png')
 
 jinja2_env = Environment(loader=FileSystemLoader(TEMPLATES_ROOT))
 
+logger = logging.getLogger(__name__)
+
 
 class Episode(object):
     """Podcast episode"""
@@ -56,9 +60,10 @@ class Episode(object):
         self.length = os.path.getsize(filename)
 
         try:
-            self.tags = mutagen.File(self.filename, easy=True)
-        except HeaderNotFoundError:
+            self.tags = mutagen.File(self.filename, easy=True) or {}
+        except HeaderNotFoundError as err:
             self.tags = {}
+            logger.warning("Could not load tags of file {filename} due to: {err!r}".format(filename=self.filename, err=err))
 
         try:
             self.id3 = ID3(self.filename)
