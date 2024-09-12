@@ -121,7 +121,7 @@ class Episode(object):
         fn = os.path.basename(filepath)
         path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
         path = re.sub(r'//', '/', path)
-        url = self.root_url + pathname2url(path)
+        url = self.root_url + quote(path, errors="surrogateescape")
         return url
 
     @property
@@ -236,7 +236,7 @@ class Channel(object):
             description=self.description,
             link=escape(self.link),
             items=u''.join(episode.as_html() for episode in sorted(self)),
-        ).strip()
+        ).strip().encode("utf-8", "surrogateescape")
 
 
 def serve(channel):
