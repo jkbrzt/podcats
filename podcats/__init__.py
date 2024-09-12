@@ -7,6 +7,7 @@ a built-in web server so that they can be imported into iTunes
 or another podcast client.
 
 """
+import datetime
 import os
 import re
 import time
@@ -93,6 +94,10 @@ class Episode(object):
         filename = os.path.basename(self.filename)
         directory = os.path.split(os.path.dirname(self.filename))[-1]
         template = jinja2_env.get_template('episode.html')
+        try:
+            date = formatdate(self.date)
+        except ValueError:
+            date = datetime.datetime.now(tz=datetime.timezone.utc)
 
         return template.render(
             title=escape(self.title),
@@ -101,7 +106,7 @@ class Episode(object):
             directory=directory,
             mimetype=self.mimetype,
             length=humanize.naturalsize(self.length),
-            date=formatdate(self.date),
+            date=date,
             image_url=self.image,
         )
 
