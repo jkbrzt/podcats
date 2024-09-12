@@ -26,6 +26,7 @@ except ImportError:
 import mutagen
 import humanize
 from mutagen.id3 import ID3
+from mutagen.mp3 import HeaderNotFoundError
 from flask import Flask, Response
 # noinspection PyPackageRequirements
 from jinja2 import Environment, FileSystemLoader
@@ -52,7 +53,12 @@ class Episode(object):
         self.relative_dir = relative_dir
         self.root_url = root_url
         self.length = os.path.getsize(filename)
-        self.tags = mutagen.File(self.filename, easy=True)
+
+        try:
+            self.tags = mutagen.File(self.filename, easy=True)
+        except HeaderNotFoundError:
+            self.tags = {}
+
         try:
             self.id3 = ID3(self.filename)
         except Exception:
