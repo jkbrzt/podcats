@@ -7,6 +7,8 @@ a built-in web server so that they can be imported into iTunes
 or another podcast client.
 
 """
+import datetime
+import logging
 import os
 import re
 import time
@@ -14,6 +16,7 @@ import argparse
 import mimetypes
 from email.utils import formatdate
 from os import path
+from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
 try:
@@ -26,6 +29,7 @@ except ImportError:
 import mutagen
 import humanize
 from mutagen.id3 import ID3
+from mutagen.mp3 import HeaderNotFoundError
 from flask import Flask, Response
 # noinspection PyPackageRequirements
 from jinja2 import Environment, FileSystemLoader
@@ -43,6 +47,8 @@ BOOK_COVER_EXTENSIONS = ('.jpg', '.jpeg', '.png')
 
 jinja2_env = Environment(loader=FileSystemLoader(TEMPLATES_ROOT))
 
+logger = logging.getLogger(__name__)
+
 
 class Episode(object):
     """Podcast episode"""
@@ -52,7 +58,13 @@ class Episode(object):
         self.relative_dir = relative_dir
         self.root_url = root_url
         self.length = os.path.getsize(filename)
-        self.tags = mutagen.File(self.filename, easy=True)
+
+        try:
+            self.tags = mutagen.File(self.filename, easy=True) or {}
+        except HeaderNotFoundError as err:
+            self.tags = {}
+            logger.warning("Could not load tags of file {filename} due to: {err!r}".format(filename=self.filename, err=err))
+
         try:
             self.id3 = ID3(self.filename)
         except Exception:
@@ -87,6 +99,10 @@ class Episode(object):
         filename = os.path.basename(self.filename)
         directory = os.path.split(os.path.dirname(self.filename))[-1]
         template = jinja2_env.get_template('episode.html')
+        try:
+            date = formatdate(self.date)
+        except ValueError:
+            date = datetime.datetime.now(tz=datetime.timezone.utc)
 
         return template.render(
             title=escape(self.title),
@@ -95,7 +111,7 @@ class Episode(object):
             directory=directory,
             mimetype=self.mimetype,
             length=humanize.naturalsize(self.length),
-            date=formatdate(self.date),
+            date=date,
             image_url=self.image,
         )
 
@@ -110,7 +126,7 @@ class Episode(object):
         fn = os.path.basename(filepath)
         path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
         path = re.sub(r'//', '/', path)
-        url = self.root_url + pathname2url(path)
+        url = self.root_url + quote(path, errors="surrogateescape")
         return url
 
     @property
@@ -225,7 +241,7 @@ class Channel(object):
             description=self.description,
             link=escape(self.link),
             items=u''.join(episode.as_html() for episode in sorted(self)),
-        ).strip()
+        ).strip().encode("utf-8", "surrogateescape")
 
 
 def serve(channel):
