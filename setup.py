@@ -10,13 +10,13 @@ def _get_long_description():
 
 setup(
     name='podcats',
-    version='0.6.3',
+    version='0.7.0',
     description=('An application that generates RSS feeds for podcast '
                  'episodes from local audio files and, optionally, '
                  'exposes both via a built-in web server'),
     long_description=_get_long_description(),
-    url='https://github.com/jakubroztocil/podcats',
-    download_url='https://github.com/jakubroztocil/podcats',
+    url='https://github.com/jkbrzt/podcats',
+    download_url='https://github.com/jkbrzt/podcats',
     author='Jakub Roztocil',
     author_email='jakub@subtleapps.com',
     license='BSD',
@@ -37,8 +37,12 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: BSD License',
