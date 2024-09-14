@@ -19,13 +19,6 @@ from os import path
 from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
-try:
-    from urllib.request import pathname2url
-except ImportError:
-    # For python 2
-    # noinspection PyUnresolvedReferences
-    from urllib import pathname2url
-
 import mutagen
 import humanize
 from mutagen.id3 import ID3
