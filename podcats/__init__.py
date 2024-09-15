@@ -19,13 +19,6 @@ from os import path
 from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
-try:
-    from urllib.request import pathname2url
-except ImportError:
-    # For python 2
-    # noinspection PyUnresolvedReferences
-    from urllib import pathname2url
-
 import mutagen
 import humanize
 from mutagen.id3 import ID3
@@ -63,7 +56,9 @@ class Episode(object):
             self.tags = mutagen.File(self.filename, easy=True) or {}
         except HeaderNotFoundError as err:
             self.tags = {}
-            logger.warning("Could not load tags of file {filename} due to: {err!r}".format(filename=self.filename, err=err))
+            logger.warning(
+                "Could not load tags of file {filename} due to: {err!r}".format(filename=self.filename, err=err)
+            )
 
         try:
             self.id3 = ID3(self.filename)
@@ -124,9 +119,9 @@ class Episode(object):
 
     def _to_url(self, filepath):
         fn = os.path.basename(filepath)
-        path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
-        path = re.sub(r'//', '/', path)
-        url = self.root_url + quote(path, errors="surrogateescape")
+        path_ = STATIC_PATH + '/' + self.relative_dir + '/' + fn
+        path_ = re.sub(r'//', '/', path_)
+        url = self.root_url + quote(path_, errors="surrogateescape")
         return url
 
     @property
