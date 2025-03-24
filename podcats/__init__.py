@@ -85,6 +85,7 @@ class Episode(object):
             guid=escape(self.url),
             mimetype=self.mimetype,
             length=self.length,
+            file_size_human=humanize.naturalsize(self.length),
             date=formatdate(self.date),
             image_url=self.image,
         )
