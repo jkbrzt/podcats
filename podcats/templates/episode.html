@@ -8,6 +8,9 @@
         <li>File: {{ filename }}</li>
         <li>Date: {{ date }}</li>
         <li>Size: {{ length }}</li>
+        {% if duration %}
+        <li>Duration: {{ duration_formatted }}</li>
+        {% endif %}
         <li>Mimetype: {{ mimetype }}</li>
     </ul>
     <audio controls>

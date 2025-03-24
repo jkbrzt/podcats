@@ -5,6 +5,9 @@
     <pubDate>{{ date }}</pubDate>
     <description><![CDATA[
         <p><strong>File size:</strong> {{ file_size_human }}</p>
+        {% if duration %}
+        <p><strong>Duration:</strong> {{ duration_formatted }}</p>
+        {% endif %}
         {% if image_url %}
         <p><img src="{{ image_url }}" alt="Episode cover art" style="max-width:300px;" /></p>
         {% endif %}

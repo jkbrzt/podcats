@@ -88,6 +88,8 @@ class Episode(object):
             file_size_human=humanize.naturalsize(self.length),
             date=formatdate(self.date),
             image_url=self.image,
+            duration=self.duration,
+            duration_formatted=self.duration_formatted,
         )
 
     def as_html(self):
@@ -109,6 +111,8 @@ class Episode(object):
             length=humanize.naturalsize(self.length),
             date=date,
             image_url=self.image,
+            duration=self.duration,
+            duration_formatted=self.duration_formatted,
         )
 
     def get_tag(self, name):
@@ -194,6 +198,37 @@ class Episode(object):
             return self._to_url(abs_path_image)
         else:
             return None
+            
+    @property
+    def duration(self):
+        """Return episode duration in seconds"""
+        try:
+            audio = mutagen.File(self.filename)
+            if audio and hasattr(audio, "info") and hasattr(audio.info, "length"):
+                return int(audio.info.length)
+            return None
+        except Exception as err:
+            logger.warning(
+                "Could not get duration of file {filename} due to: {err!r}".format(
+                    filename=self.filename, err=err
+                )
+            )
+            return None
+            
+    @property
+    def duration_formatted(self):
+        """Return formatted duration as HH:MM:SS"""
+        seconds = self.duration
+        if seconds is None:
+            return "Unknown"
+        
+        hours, remainder = divmod(seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        
+        if hours > 0:
+            return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
+        else:
+            return "{:02d}:{:02d}".format(minutes, seconds)
 
 
 class Channel(object):
