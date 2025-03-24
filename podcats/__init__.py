@@ -167,9 +167,9 @@ class Episode(object):
             # Try to extract a number from the filename for ordering
             numbers = re.findall(r'\d+', base_name)
             if numbers:
-                # Use the first number found as an offset (in seconds)
+                # Use the last number found as an offset (in seconds)
                 # This creates artificial timestamps that preserve the numerical order
-                offset = int(numbers[0]) * 3600  # Convert to seconds (1 hour increments)
+                offset = int(numbers[-1]) * 3600  # Convert to seconds (1 hour increments)
                 return base_timestamp + offset
             else:
                 # If no number in filename, use alphabetical ordering
@@ -357,10 +357,8 @@ parser.add_argument(
     '--force-order-by-name',
     action="store_true",
     help='Force ordering episodes by filename instead of by date. '
-         'Creates artificial timestamps based on filenames: '
-         'numeric parts (like "Chapter 1") are ordered numerically, '
-         'while non-numeric filenames are ordered alphabetically. '
-         'Useful for audiobooks or series where the logical order matters.'
+         'by creating an artificial timestamp based on the last'
+         'number found in the filename.'
 )
 
 
