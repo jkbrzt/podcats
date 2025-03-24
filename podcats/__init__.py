@@ -189,7 +189,7 @@ class Episode(object):
                 image_files.append(fn)
 
         if len(image_files) > 0:
-            abs_path_image = image_files[0]
+            abs_path_image = os.path.join(directory, image_files[0])
             return self._to_url(abs_path_image)
         else:
             return None
