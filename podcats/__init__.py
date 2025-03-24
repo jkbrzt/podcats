@@ -127,7 +127,17 @@ class Episode(object):
 
     @property
     def title(self):
-        """Return episode title"""
+        """Return episode title
+        
+        The title is constructed from:
+        1. The filename (without extension) as the base title
+        2. If ID3 tags are available:
+           - Appends the TIT2 tag (standard ID3 title tag) if present
+           - Appends the COMM tag (standard ID3 comment tag) if present
+           
+        This provides a fallback mechanism where the filename is always used,
+        and ID3 metadata enhances the title when available.
+        """
         text = os.path.splitext(os.path.basename(self.filename))[0]
         if self.id3 is not None:
             val = self.id3.getall('TIT2')
