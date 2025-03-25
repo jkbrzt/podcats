@@ -262,11 +262,21 @@ class Channel(object):
     def as_xml(self):
         """Return channel XML with all episode items"""
         template = jinja2_env.get_template('feed.xml')
+        
+        # Get all episodes and sort them
+        episodes = sorted(self)
+        
+        # Get the first episode's image URL if available
+        image_url = None
+        if episodes:
+            image_url = episodes[0].image
+        
         return template.render(
             title=escape(self.title),
             description=escape(self.description),
             link=escape(self.link),
-            items=u''.join(episode.as_xml() for episode in sorted(self))
+            image_url=image_url,
+            items=u''.join(episode.as_xml() for episode in episodes)
         ).strip()
 
     def as_html(self):
