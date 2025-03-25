@@ -77,6 +77,8 @@ class Episode(object):
 
     def as_xml(self):
         """Return episode item XML"""
+        filename = os.path.basename(self.filename)
+        directory = os.path.split(os.path.dirname(self.filename))[-1]
         template = jinja2_env.get_template('episode.xml')
 
         return template.render(
@@ -90,6 +92,8 @@ class Episode(object):
             image_url=self.image,
             duration=self.duration,
             duration_formatted=self.duration_formatted,
+            filename=filename,
+            directory=directory,
         )
 
     def as_html(self):
