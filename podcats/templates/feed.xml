@@ -6,6 +6,11 @@
         <link>{{ link }}</link>
         {% if image_url %}
         <itunes:image href="{{ image_url }}"/>
+        <image>
+            <url>{{ image_url }}</url>
+            <title>{{ title }}</title>
+            <link>{{ link }}</link>
+        </image>
         {% endif %}
         {{ items }}
     </channel>
