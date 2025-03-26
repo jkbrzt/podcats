@@ -77,6 +77,8 @@ class Episode(object):
 
     def as_xml(self):
         """Return episode item XML"""
+        filename = os.path.basename(self.filename)
+        directory = os.path.split(os.path.dirname(self.filename))[-1]
         template = jinja2_env.get_template('episode.xml')
 
         return template.render(
@@ -85,8 +87,13 @@ class Episode(object):
             guid=escape(self.url),
             mimetype=self.mimetype,
             length=self.length,
+            file_size_human=humanize.naturalsize(self.length),
             date=formatdate(self.date),
             image_url=self.image,
+            duration=self.duration,
+            duration_formatted=self.duration_formatted,
+            filename=filename,
+            directory=directory,
         )
 
     def as_html(self):
@@ -105,9 +112,12 @@ class Episode(object):
             filename=filename,
             directory=directory,
             mimetype=self.mimetype,
-            length=humanize.naturalsize(self.length),
+            length=self.length,
+            file_size_human=humanize.naturalsize(self.length),
             date=date,
             image_url=self.image,
+            duration=self.duration,
+            duration_formatted=self.duration_formatted,
         )
 
     def get_tag(self, name):
@@ -193,6 +203,37 @@ class Episode(object):
             return self._to_url(abs_path_image)
         else:
             return None
+            
+    @property
+    def duration(self):
+        """Return episode duration in seconds"""
+        try:
+            audio = mutagen.File(self.filename)
+            if audio and hasattr(audio, "info") and hasattr(audio.info, "length"):
+                return int(audio.info.length)
+            return None
+        except Exception as err:
+            logger.warning(
+                "Could not get duration of file {filename} due to: {err!r}".format(
+                    filename=self.filename, err=err
+                )
+            )
+            return None
+            
+    @property
+    def duration_formatted(self):
+        """Return formatted duration as HH:MM:SS"""
+        seconds = self.duration
+        if seconds is None:
+            return "Unknown"
+        
+        hours, remainder = divmod(seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        
+        if hours > 0:
+            return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
+        else:
+            return "{:02d}:{:02d}".format(minutes, seconds)
 
 
 class Channel(object):
@@ -221,11 +262,21 @@ class Channel(object):
     def as_xml(self):
         """Return channel XML with all episode items"""
         template = jinja2_env.get_template('feed.xml')
+        
+        # Get all episodes and sort them
+        episodes = sorted(self)
+        
+        # Get the first episode's image URL if available
+        image_url = None
+        if episodes:
+            image_url = episodes[0].image
+        
         return template.render(
             title=escape(self.title),
             description=escape(self.description),
             link=escape(self.link),
-            items=u''.join(episode.as_xml() for episode in sorted(self))
+            image_url=image_url,
+            items=u''.join(episode.as_xml() for episode in episodes)
         ).strip()
 
     def as_html(self):

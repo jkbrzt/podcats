@@ -3,13 +3,9 @@
     {% if image_url %}
     <img class="book-cover" src="{{ image_url }}"/>
     {% endif %}
-    <ul>
-        <li>Directory: {{ directory }}</li>
-        <li>File: {{ filename }}</li>
-        <li>Date: {{ date }}</li>
-        <li>Size: {{ length }}</li>
-        <li>Mimetype: {{ mimetype }}</li>
-    </ul>
+    <div class="episode-description">
+        {% include 'episode_description.html' %}
+    </div>
     <audio controls>
         <source src="{{ url }}"/>
     </audio>
