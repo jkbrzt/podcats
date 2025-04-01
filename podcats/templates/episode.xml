@@ -3,6 +3,9 @@
     <enclosure url={{ url }} type="{{ mimetype }}" length="{{ length }}" />
     <guid>{{ guid }}</guid>
     <pubDate>{{ date }}</pubDate>
+    <description><![CDATA[
+        {% include 'episode_description.html' %}
+    ]]></description>
     {% if image_url %}
         <itunes:image href="{{ image_url }}"/>
     {% endif %}

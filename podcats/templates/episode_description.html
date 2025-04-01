@@ -1,0 +1,15 @@
+{% if directory %}
+<p><strong>Directory:</strong> {{ directory }}</p>
+{% endif %}
+{% if filename %}
+<p><strong>File:</strong> {{ filename }}</p>
+{% endif %}
+<p><strong>Date:</strong> {{ date }}</p>
+<p><strong>File size:</strong> {{ file_size_human }}</p>
+{% if duration %}
+<p><strong>Duration:</strong> {{ duration_formatted }}</p>
+{% endif %}
+<p><strong>Mimetype:</strong> {{ mimetype }}</p>
+{% if image_url %}
+<p><img src="{{ image_url }}" alt="Episode cover art" style="max-width:300px;" /></p>
+{% endif %}
