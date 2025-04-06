@@ -131,6 +131,11 @@ class Episode(object):
         fn = os.path.basename(filepath)
         path_ = STATIC_PATH + '/' + self.relative_dir + '/' + fn
         path_ = re.sub(r'//', '/', path_)
+        
+        # Ensure we don't get double slashes when joining root_url and path
+        if self.root_url.endswith('/') and path_.startswith('/'):
+            path_ = path_[1:]  # Remove leading slash from path if root_url ends with slash
+            
         url = self.root_url + quote(path_, errors="surrogateescape")
         return url
 
@@ -313,11 +318,16 @@ def serve(channel):
 def main():
     """Main function"""
     args = parser.parse_args()
+    # Default server URL for binding and display
     url = 'http://' + args.host + ':' + args.port
+
+    # Use public URL if provided, otherwise use server URL
+    root_url = args.public_url if args.public_url else url
+
     channel = Channel(
         root_dir=path.abspath(args.directory),
-        root_url=url,
-        host=args.host,
+        root_url=root_url,  # Use the public URL for links if provided
+        host=args.host,     # Still use host/port for server binding
         port=args.port,
         title=args.title,
         link=args.link,
@@ -329,10 +339,15 @@ def main():
         print(channel.as_html())
     else:
         print('Welcome to the Podcats web server!')
+        print('\nListening on http://{}:{}'.format(args.host, args.port))
+
+        if args.public_url:
+            print('Using public URL: {}'.format(args.public_url))
+
         print('\nYour podcast feed is available at:\n')
         print('\t' + channel.root_url + '\n')
         print('The web interface is available at\n')
-        print('\t{url}{web_path}\n'.format(url=url, web_path=WEB_PATH))
+        print('\t{url}{web_path}\n'.format(url=root_url, web_path=WEB_PATH))
         serve(channel)
 
 
@@ -348,6 +363,10 @@ parser.add_argument(
     '--port',
     default='5000',
     help='listen tcp port number'
+)
+parser.add_argument(
+    '--public-url',
+    help='public-facing URL for links in the feed (useful when behind a reverse proxy)'
 )
 parser.add_argument(
     'action',
