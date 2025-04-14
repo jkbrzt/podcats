@@ -197,10 +197,10 @@ class Episode(object):
         """Return an eventual cover image"""
         directory = os.path.split(self.filename)[0]
         image_files = []
-
+        sound_name = os.path.splitext(os.path.split(self.filename)[1])[0]
         for fn in os.listdir(directory):
-            ext = os.path.splitext(fn)[1]
-            if ext.lower() in BOOK_COVER_EXTENSIONS:
+            image_name,ext = os.path.splitext(fn)
+            if sound_name == image_name and ext.lower() in BOOK_COVER_EXTENSIONS:
                 image_files.append(fn)
 
         if len(image_files) > 0:
@@ -239,6 +239,7 @@ class Episode(object):
             return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
         else:
             return "{:02d}:{:02d}".format(minutes, seconds)
+
 
 
 class Channel(object):
